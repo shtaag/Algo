@@ -12,9 +12,8 @@ import java.util.Stack;
  */
 public class QuickSortRoop extends QuickSortRecursive{
 	
-	public static void main(String[] args) {
+	Stack<SortRange> remained = new Stack<SortRange>();
 
-	}
 	public void sort(List<Integer> array) {
 		remained.push(new SortRange(0, array.size()-1));
 		while (remained.size() > 0) {
@@ -26,6 +25,7 @@ public class QuickSortRoop extends QuickSortRecursive{
 			}	
 		}
 	}
+	
 	private static class SortRange {
 		public final int start;
 		public final int end;
@@ -34,7 +34,6 @@ public class QuickSortRoop extends QuickSortRecursive{
 			this.end = end;
 		}
 	}
-	Stack<SortRange> remained = new Stack<SortRange>();
 	private int partition(List<Integer> array, final int p, final int r) {
 		
 		Integer rightest = array.get(r);
