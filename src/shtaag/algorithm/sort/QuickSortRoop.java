@@ -29,7 +29,7 @@ public class QuickSortRoop extends QuickSortRecursive{
 	private static class SortRange {
 		public final int start;
 		public final int end;
-		public SortRange(int start, int end) {
+		private SortRange(int start, int end) {
 			this.start = start;
 			this.end = end;
 		}
