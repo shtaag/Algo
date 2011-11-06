@@ -111,30 +111,12 @@ public class EightQueen {
 		private int[] column;
 		private int[] diagPos;
 		private int[] diagNeg;
-		private Cell[][] cellArray;
 		private int size;
 		private Board(int n) {
 			this.size = n;
 			column = new int[n];
 			diagPos = new int[2*n-1];
 			diagNeg = new int[2*n-1];
-			
-			cellArray = new Cell[n][n];
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < n; j++) {
-					cellArray[i][j] = new Cell(i,j);
-				}
-			}
-		}
-		
-		private static class Cell {
-			private final int row;
-			private final int column;
-			private int occupied;
-			private Cell(int row, int column) {
-				this.row = row;
-				this.column = column;
-			}
 		}
 	}
 
