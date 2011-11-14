@@ -7,14 +7,12 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
-import javax.swing.text.html.MinimalHTMLWriter;
-
 /**
  * @author takei_s
  * @Date 2011/11/12
  * 
  */
-public class BTree<K extends Comparable<K>, V> implements Iterable<BTree<K, V>> {
+public class BTree<K extends Comparable<K>, V> implements Iterable<V> {
 	
 	final int minDegree;
 	private Node<K, V> nodeInfo;
@@ -59,37 +57,39 @@ public class BTree<K extends Comparable<K>, V> implements Iterable<BTree<K, V>> 
 		return btreeSearch(root, key);
 	}
 	private V btreeSearch(Node<K, V> node, K key) {
-		int i = 1;
+		int i = 0;
 		while (i <= node.elementSize && key.compareTo(((Element<K, V>)node.elementArray[i]).key) > 0) {
 			i++;
-			if (i <= node.elementSize && key.equals(((Element<K, V>)node.elementArray[i]).key) ) {
-				return ((Element<K, V>)node.elementArray[i]).value;
-			} else if (node.isLeaf) {
-				return null;
-			} else {
-				return btreeSearch((Node<K, V>) node.childArray[i], key);
-			}
 		}
-		throw new NoSuchElementException();
+		if (i <= node.elementSize && key.equals(((Element<K, V>)node.elementArray[i]).key) ) {
+			return ((Element<K, V>)node.elementArray[i]).value;
+		} else if (node.isLeaf) {
+			throw new NoSuchElementException();
+		} else {
+			return btreeSearch((Node<K, V>) node.childArray[i], key);
+		}
 	}
 
-	// static�ɂł��Ȃ��E�E
+	@Override
+	public Iterator<V> iterator() {
+		return new NodeIterator(root);
+	}
 	private class NodeIterator implements Iterator<V> {
 
 		private Stack<Node<K, V>> nodeStack = new Stack<Node<K, V>>();
 		private Stack<Element<K, V>> elemStack = new Stack<Element<K, V>>();
 		
-		NodeIterator(BTree<K, V> root) {
-			for (int i = 0;  i < root.nodeInfo.elementSize; i++) {
-				elemStack.push((Element<K, V>) root.nodeInfo.elementArray[i]);
+		NodeIterator(Node<K, V> root) {
+			for (int i = 0;  i < root.elementSize; i++) {
+				elemStack.push((Element<K, V>) root.elementArray[i]);
 			}
-			for (int i = 0;  i < root.nodeInfo.elementSize; i++) {
-				nodeStack.push((Node<K, V>) root.nodeInfo.childArray[i]);
+			for (int i = 0;  i < root.childSize; i++) {
+				nodeStack.push((Node<K, V>) root.childArray[i]);
 			}
 		}
 		@Override
 		public boolean hasNext() {
-			return ! nodeStack.empty();
+			return ! (elemStack.empty() && nodeStack.empty());
 		}
 
 		@Override
@@ -123,15 +123,16 @@ public class BTree<K extends Comparable<K>, V> implements Iterable<BTree<K, V>> 
 		}
 	}
 
-	public void insert(BTree<K, V> tree, K key, V value) {
-		root = tree.root;
-		if (root.elementSize == minDegree * 2 -1) {
+	public void insert(final BTree<K, V> tree, K key, V value) {
+		Node<K, V> exRoot = tree.root;
+		if (tree.root.elementSize == minDegree * 2 -1) {
 			Node<K, V> newNode = new Node<K, V>(minDegree);
 			tree.root = newNode;
 			newNode.isLeaf = false;
 			newNode.elementSize = 0;
-			newNode.childArray[0] = root;
-			btreeSplitChild(newNode, 1);
+			newNode.childArray[0] = exRoot;
+			newNode.childSize = 1;
+			btreeSplitChild(newNode, 0);
 			btreeInsertNonFull(newNode, key, value);
 		} else {
 			btreeInsertNonFull(root, key, value);
@@ -160,7 +161,7 @@ public class BTree<K extends Comparable<K>, V> implements Iterable<BTree<K, V>> 
 					index++;
 				}
 			}
-			btreeInsertNonFull(node, key, value);
+			btreeInsertNonFull((Node<K, V>) node.childArray[index], key, value);
 		}
 	}
 	
@@ -172,34 +173,35 @@ public class BTree<K extends Comparable<K>, V> implements Iterable<BTree<K, V>> 
 		
 		for (int j = 0; j < minDegree - 1; j++) {
 			newNode.elementArray[j] = exNode.elementArray[j + minDegree];
+			exNode.elementArray[j + minDegree] = null;
 		}
 		newNode.elementSize = minDegree - 1;
+		exNode.elementSize = minDegree - 1;
 		
 		if ( ! exNode.isLeaf) {
 			for (int j = 0; j < minDegree; j++) {
 				newNode.childArray[j] = exNode.childArray[j + minDegree];
+				exNode.childArray[j + minDegree] = null;
+				exNode.childSize--;
+				
 			}
 			newNode.childSize = minDegree;
-			exNode.childSize = minDegree;
 		}
-		//TODO +1 is necessary??
-		for (int j = node.elementSize+1; j >= index + 1; j--) {
+
+		for (int j = node.childSize-1; j >= index; j--) {
 			node.childArray[j + 1] = node.childArray[j];
 		}
 		node.childArray[index + 1] = newNode;
 		node.childSize++;
-		for (int j = node.elementSize; j >= index; j--) {
-			node.elementArray[j + 1] = node.elementArray[j];
+		if (node.elementSize != 0) {
+			for (int j = node.elementSize; j >= index; j--) {
+				node.elementArray[j - 1] = node.elementArray[j - 2];
+			}
 		}
-		node.elementArray[index] = exNode.elementArray[minDegree];
+		node.elementArray[index] = exNode.elementArray[minDegree-1];
+		exNode.elementArray[minDegree - 1] = null;
 		node.elementSize++;
 	}
 
-	@Override
-	public Iterator<BTree<K, V>> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 
 }

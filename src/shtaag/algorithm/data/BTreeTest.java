@@ -6,6 +6,8 @@ package shtaag.algorithm.data;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 
+import java.util.Iterator;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,18 +38,18 @@ public class BTreeTest {
 	@Test
 	public void testSearch() {
 		BTree<Integer, Integer> tree = new BTree<Integer, Integer>(4);
-		tree.insert(tree, 1, 10);
 		tree.insert(tree, 2, 20);
-		tree.insert(tree, 3, 30);
-		tree.insert(tree, 4, 40);
 		tree.insert(tree, 5, 50);
+		tree.insert(tree, 3, 30);
 		tree.insert(tree, 6, 60);
+		tree.insert(tree, 1, 10);
 		tree.insert(tree, 7, 70);
 		tree.insert(tree, 8, 80);
+		tree.insert(tree, 4, 40);
 		tree.insert(tree, 9, 90);
 		tree.insert(tree, 10, 100);
 		
-		assertThat(tree.search(3), is(30));
+		assertThat(tree.search(4), is(40));
 	}
 
 	/**
@@ -55,9 +57,23 @@ public class BTreeTest {
 	 */
 	@Test
 	public void testInsert() {
+		BTree<Integer, Integer> tree = new BTree<Integer, Integer>(4);
+		tree.insert(tree, -2, 20);
+		tree.insert(tree, 5, 50);
+		tree.insert(tree, 3, 30);
+		tree.insert(tree, -6, 60);
+		tree.insert(tree, 1, 10);
+		tree.insert(tree, 7, 70);
+		tree.insert(tree, 8, 80);
+		tree.insert(tree, 4, 40);
+		tree.insert(tree, 9, 90);
+		tree.insert(tree, 10, 100);
 		
-		int[] intar = new int[10];
-		intar[0] = 1;
+		for (Iterator<Integer> itr = tree.iterator(); itr.hasNext();) {
+			System.out.println(itr.next());
+		}
+		
+		assertThat(tree.search(3), is(30));
 	}
 
 	/**
@@ -65,7 +81,21 @@ public class BTreeTest {
 	 */
 	@Test
 	public void testIterator() {
-		fail("Not yet implemented");
+		BTree<Integer, Integer> tree = new BTree<Integer, Integer>(4);
+		tree.insert(tree, 2, 20);
+		tree.insert(tree, 2, 20);
+		tree.insert(tree, 2, 20);
+		tree.insert(tree, 2, 20);
+		tree.insert(tree, 2, 20);
+		tree.insert(tree, 2, 20);
+		
+		
+		
+		for (Iterator<Integer> itr = tree.iterator(); itr.hasNext();) {
+			System.out.println(itr.next());
+		}
+		
+		assertThat(tree.search(2), is(20));
 	}
 
 }
