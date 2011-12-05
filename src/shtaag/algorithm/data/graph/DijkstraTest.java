@@ -41,15 +41,19 @@ public class DijkstraTest {
 		graph.addNode("D");
 		
 		graph.setEdge("A", "B", 1);
-		graph.setEdge("A", "C", 1);
-		graph.setEdge("A", "D", 1);
+		graph.setEdge("A", "C", 6);
+		graph.setEdge("A", "D", 8);
 		
-		graph.setEdge("B", "C", 3);
+		graph.setEdge("B", "C", 2);
 		graph.setEdge("B", "D", 5);
 		
-		graph.setEdge("C", "D", 6);
+		graph.setEdge("C", "D", 1);
 		
 		new Dijkstra<String>().search(graph, "A");
+		System.out.println("Print out Graph path:");
+		graph.printPath("A", "B");
+		System.out.println("Print out Graph path:");
+		graph.printPath("A", "C");
 		System.out.println("Print out Graph path:");
 		graph.printPath("A", "D");
 	}
