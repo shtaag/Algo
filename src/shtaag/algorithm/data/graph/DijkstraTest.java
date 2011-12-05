@@ -56,6 +56,14 @@ public class DijkstraTest {
 		graph.printPath("A", "C");
 		System.out.println("Print out Graph path:");
 		graph.printPath("A", "D");
+		
+		new Dijkstra<String>().search(graph, "B");
+		System.out.println("Print out Graph path:");
+		graph.printPath("B", "A");
+		System.out.println("Print out Graph path:");
+		graph.printPath("B", "C");
+		System.out.println("Print out Graph path:");
+		graph.printPath("B", "D");
 	}
 
 }
