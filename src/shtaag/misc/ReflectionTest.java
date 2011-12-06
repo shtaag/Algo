@@ -27,14 +27,16 @@ public class ReflectionTest {
 		
 		String finalField = "final-immutable";
 		String privateField = "private-immutable";
-		ToMock mock = new ToMock(finalField, privateField);
+		ToMock mock = new ToMock(finalField, Integer.valueOf(3));
 		
-		Class clazz = mock.getClass();
+		Class<? extends ToMock> clazz = mock.getClass();
 		Field[] fields = clazz.getFields();
+		System.out.println(fields.length);
 		for (Field each : fields) {
 			System.out.println(each.toString());
 		}
-		Field fin = clazz.getField("finalField");
+		Field fin = clazz.getField("test");
+		fin.setAccessible(true);
 		fin.set(fin, finalField);
 		
 		System.out.println(mock.getFinalField());
