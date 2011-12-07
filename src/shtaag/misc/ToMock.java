@@ -12,10 +12,10 @@ public class ToMock {
 	
 	private final String finalField;
 
-	private Integer privateField = Integer.valueOf(3);
+	private String privateField;
 	public Integer test = Integer.valueOf(1);
 	
-	public ToMock(String finalField, Integer privateField) {
+	public ToMock(String finalField, String privateField) {
 		this.finalField = finalField;
 		this.privateField = privateField;
 	}
@@ -24,7 +24,7 @@ public class ToMock {
 		return finalField;
 	}
 	
-	public Integer getPrivateField() {
+	public String getPrivateField() {
 		return privateField;
 	}
 	
