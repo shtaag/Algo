@@ -50,6 +50,7 @@ public class DijkstraTest {
 		graph.setEdge("C", "D", 1);
 		
 		new Dijkstra<String>().search(graph, "A");
+		System.out.println(graph.toString());
 		System.out.println("Print out Graph path:");
 		graph.printPath("A", "B");
 		System.out.println("Print out Graph path:");
@@ -58,6 +59,7 @@ public class DijkstraTest {
 		graph.printPath("A", "D");
 		
 		new Dijkstra<String>().search(graph, "B");
+		System.out.println(graph.toString());
 		System.out.println("Print out Graph path:");
 		graph.printPath("B", "A");
 		System.out.println("Print out Graph path:");

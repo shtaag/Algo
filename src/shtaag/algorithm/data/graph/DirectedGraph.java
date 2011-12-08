@@ -55,6 +55,15 @@ public class DirectedGraph<K> {
 		}
 	}
 	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (List<Node<K>> adjList: adjListMap.values()){
+			Node<K> node = adjList.get(0);
+			sb.append(node.key + ": cost=" + node.getDistance() + " / ");
+		}
+		return sb.toString();
+	}
+	
 	public void initialize(K start) {
 		for (Entry<K, List<Node<K>>> entry : adjListMap.entrySet()) {
 			Node<K> node = entry.getValue().get(0);
