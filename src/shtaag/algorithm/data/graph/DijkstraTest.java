@@ -100,7 +100,7 @@ public class DijkstraTest {
 		new Dijkstra<String>().search(graph, "A");
 		System.out.println(graph.toString());
 		System.out.println("Print out Graph path:");
-		graph.printPath("A", "B");
+		graph.printPath("A", "A");
 		System.out.println("Print out Graph path:");
 		graph.printPath("A", "C");
 		System.out.println("Print out Graph path:");
@@ -110,6 +110,8 @@ public class DijkstraTest {
 		System.out.println(graph.toString());
 		System.out.println("Print out Graph path:");
 		graph.printPath("B", "A");
+		System.out.println("Print out Graph path:");
+		graph.printPath("C", "D");
 		System.out.println("Print out Graph path:");
 		graph.printPath("B", "C");
 		System.out.println("Print out Graph path:");
