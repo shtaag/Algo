@@ -9,8 +9,6 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Stack;
 
-import com.sun.jmx.remote.internal.ArrayQueue;
-
 /**
  * @author takei_s
  * @Date 2012/01/12
@@ -40,15 +38,15 @@ public class MyAVL<T extends Comparable<T>> implements Iterable<T> {
 		return root;
 	}
 	
-	public void insert(T key) {
+	public void add(T key) {
 		if (root == null) {
 			root = new Node<T>(key);
 		}
 		
-		if (key > root.key) {
-			root.rTree.insert(key);
-		} else if (key < root.key){
-			root.lTree.insert(key);
+		if (key.compareTo(root.key) < 0) {
+			root.rTree.add(key);
+		} else if (key.compareTo(root.key) > 0){
+			root.lTree.add(key);
 		} else {
 			System.out.println("That element is already in.");
 			return;
@@ -56,7 +54,27 @@ public class MyAVL<T extends Comparable<T>> implements Iterable<T> {
 		
 	}
 	
-	public void delete(T key) {
+	public void remove(T key) {
+		
+	}
+	
+	public T search(T key, MyAVL<T> tree) {
+		if (tree.root == null) {
+			throw new NoSuchElementException();
+		}
+		
+		if (key.equals(tree.root.key)) {
+			return tree.root.key;
+		} else if (key.compareTo(root.key) < 0) {
+			if (tree.root.rTree == null) throw new NoSuchElementException();
+
+			search(key, tree.root.rTree);
+		} else if (key.compareTo(root.key) > 0){
+			if (tree.root.lTree == null) throw new NoSuchElementException();
+			
+			search(key, tree.root.lTree);
+		}
+		throw new NoSuchElementException();
 		
 	}
 	
