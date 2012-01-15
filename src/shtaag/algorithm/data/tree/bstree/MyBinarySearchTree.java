@@ -17,7 +17,7 @@ import java.util.Stack;
 public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> {
 	
 	private static class Node<T extends Comparable<T>> {
-		public final T key;
+		public T key;
 		private MyBinarySearchTree<T> rTree;
 		private MyBinarySearchTree<T> lTree;
 		
@@ -33,49 +33,121 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 	}
 	
 	private Node<T> root;
+	public MyBinarySearchTree(T key) {
+		root = new Node<T>(key);
+	}
 	
 	private Node<T> getRoot() {
 		return root;
 	}
 	
-	public void add(T key) {
-		if (root == null) {
+	public void insert(T key) {
+		if (root.key == null) {
 			root = new Node<T>(key);
-		}
-		
-		if (key.compareTo(root.key) < 0) {
-			root.rTree.add(key);
-		} else if (key.compareTo(root.key) > 0){
-			root.lTree.add(key);
-		} else {
-			System.out.println("That element is already in.");
 			return;
 		}
 		
-	}
-	
-	public void remove(T key) {
+		if (key.compareTo(root.key) < 0) {
+			if (root.lTree == null) {
+				root.lTree = new MyBinarySearchTree<T>(key);
+				return;
+			}
+			root.lTree.insert(key);
+		} else if (key.compareTo(root.key) > 0){
+			if (root.rTree == null) {
+				root.rTree = new MyBinarySearchTree<T>(key);
+				return;
+			}
+			root.rTree.insert(key);
+		} else {
+			throw new IllegalArgumentException("That element is already in.");
+		}
 		
 	}
 	
-	public T search(T key, MyBinarySearchTree<T> tree) {
-		if (tree.root == null) {
+	public void delete(T key) {
+		
+		Node<T> target = searchHelper(key, this);
+		if (target == null) throw new NoSuchElementException();
+		deleteHelp(key, target);
+	}
+	
+	private void deleteHelp(T key, Node<T> node) {
+		
+		if (node.lTree == null) {
+			if (node.rTree == null) {
+				node.key = null;
+			} else {
+				// transplant from rTree
+				node.key = node.rTree.root.key;
+				Node<T> rTreeRoot = node.rTree.root;
+				node.rTree = rTreeRoot.rTree;
+				node.lTree = rTreeRoot.lTree;
+			}
+		} else if (node.rTree == null) {
+			// in case of only lTree exists, transplant it
+			node.key = node.lTree.root.key;
+			Node<T> lTreeRoot = node.lTree.root;
+			node.lTree = lTreeRoot.lTree;
+			node.rTree = lTreeRoot.rTree;
+		} else {
+			// node has two childs
+			if (node.rTree.root.lTree == null) {
+				// right child of the node is the successor, so transplant it.
+				node.key = node.rTree.root.key;
+				Node<T> rTreeRoot = node.rTree.root;
+				node.lTree = rTreeRoot.lTree;
+				node.rTree = rTreeRoot.rTree;
+			}
+			Node<T> successor = successorInRightTree(node);
+			node.key = successor.key;
+			// successor has no lTree
+			if (successor.rTree == null) {
+				successor.key = null;
+			} else {
+				successor.key = successor.rTree.root.key;
+				successor.rTree = successor.rTree.root.rTree;
+			}
+		}
+	}
+	
+	/**
+	 * can use only the node has right tree
+	 */
+	private Node<T> successorInRightTree(Node<T> node) {
+		if (node.rTree == null) throw new IllegalArgumentException();
+		return minimum(node.rTree.root);
+	}
+	private Node<T> minimum(Node<T> node) {
+		if (node.lTree != null) {
+			return minimum(node.lTree.root);
+		}
+		return node;
+	}
+	
+	public T search(T key) {
+		
+		return searchHelper(key, this).key;
+	}
+	
+	private Node<T> searchHelper(T key, MyBinarySearchTree<T> tree) {
+		
+		if (tree.root.key == null) {
 			throw new NoSuchElementException();
 		}
 		
 		if (key.equals(tree.root.key)) {
-			return tree.root.key;
+			return tree.root;
 		} else if (key.compareTo(root.key) < 0) {
-			if (tree.root.rTree == null) throw new NoSuchElementException();
-
-			search(key, tree.root.rTree);
-		} else if (key.compareTo(root.key) > 0){
 			if (tree.root.lTree == null) throw new NoSuchElementException();
 			
-			search(key, tree.root.lTree);
+			return searchHelper(key, tree.root.lTree);
+		} else if (key.compareTo(root.key) > 0){
+			if (tree.root.rTree == null) throw new NoSuchElementException();
+			
+			return searchHelper(key, tree.root.rTree);
 		}
 		throw new NoSuchElementException();
-		
 	}
 	
 	public T depthFirstSearch(T key) {
@@ -125,10 +197,10 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 		@Override
 		public Node<T> pop() {
 			Node<T> node = stack.pop();
-			if (! node.getRTree().isEmpty()) {
+			if (node.rTree != null && node.rTree.root.key != null) {
 				stack.push(node.getRTree().getRoot());
 			}
-			if (! node.getLTree().isEmpty()) {
+			if (node.lTree != null && node.lTree.root.key != null) {
 				stack.push(node.getLTree().getRoot());
 			}
 			return node;
@@ -136,7 +208,9 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 
 		@Override
 		public boolean hasNext() {
-			return ! stack.empty();
+			if (stack.empty()) return false;
+			if (stack.peek().key == null) return false;
+			return true;
 		}
 	}
 	
@@ -151,10 +225,10 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 		@Override
 		public Node<T> pop() {
 			Node<T> node = queue.poll();
-			if (! node.getRTree().isEmpty()) {
+			if (node.rTree != null && node.rTree.root.key != null) {
 				queue.add(node.getRTree().getRoot());
 			}
-			if (! node.getLTree().isEmpty()) {
+			if (node.lTree != null && node.lTree.root.key != null) {
 				queue.add(node.getLTree().getRoot());
 			}
 			return node;
@@ -162,7 +236,9 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 		
 		@Override
 		public boolean hasNext() {
-			return ! queue.isEmpty();
+			if (queue.isEmpty()) return false;
+			if (queue.peek().key == null) return false;
+			return true;
 		}
 	}
 	
