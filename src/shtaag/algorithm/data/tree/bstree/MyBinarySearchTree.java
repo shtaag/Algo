@@ -3,41 +3,48 @@
  */
 package shtaag.algorithm.data.tree.bstree;
 
-import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.Stack;
 
 /**
+ * Binary Search Tree with bfs, dfs.<br>
+ * Made Node in shape of Key + tree, tree, such as functional programming's recursive datatype.<br>
+ * This form is beneficial to write insert compactly.<br>
+ * When a new Node is created, it has null rTree and lTree. This is not so good.<br>
+ * In Introduction to Algorithms, they used pointer to parent node, but here I don't use it, cause it is no use. 
  * @author takei_s
  * @Date 2012/01/12
  * 
  */
 public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> {
 	
-	private static class Node<T extends Comparable<T>> {
-		public T key;
+	static class Node<T extends Comparable<T>> {
+		private T key;
 		private MyBinarySearchTree<T> rTree;
 		private MyBinarySearchTree<T> lTree;
 		
 		public Node(T key) {
 			this.key = key;
 		}
-		private MyBinarySearchTree<T> getRTree() {
+		public T getKey() {
+			return key;
+		}
+		public MyBinarySearchTree<T> getRTree() {
 			return rTree;
 		}
-		private MyBinarySearchTree<T> getLTree() {
+		public MyBinarySearchTree<T> getLTree() {
 			return lTree;
 		}
 	}
 	
 	private Node<T> root;
-	public MyBinarySearchTree(T key) {
-		root = new Node<T>(key);
+	private SearchType<T> searchType;
+	public MyBinarySearchTree(T key, SearchType<T> searchType) {
+		this.root = new Node<T>(key);
+		this.searchType = searchType;
 	}
 	
-	private Node<T> getRoot() {
+	Node<T> getRoot() {
 		return root;
 	}
 	
@@ -49,13 +56,13 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 		
 		if (key.compareTo(root.key) < 0) {
 			if (root.lTree == null) {
-				root.lTree = new MyBinarySearchTree<T>(key);
+				root.lTree = new MyBinarySearchTree<T>(key, searchType);
 				return;
 			}
 			root.lTree.insert(key);
 		} else if (key.compareTo(root.key) > 0){
 			if (root.rTree == null) {
-				root.rTree = new MyBinarySearchTree<T>(key);
+				root.rTree = new MyBinarySearchTree<T>(key, searchType);
 				return;
 			}
 			root.rTree.insert(key);
@@ -126,7 +133,6 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 	}
 	
 	public T search(T key) {
-		
 		return searchHelper(key, this).key;
 	}
 	
@@ -152,21 +158,17 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 	
 	public T depthFirstSearch(T key) {
 		
-		for (Iterator<T> it = dfsIterator(); it.hasNext(); ) {
+		for (Iterator<T> it = new HelpIterator<T>(this, new DfsType<T>()); it.hasNext(); ) {
 			T current = it.next(); 
 			if (current == key) {
 				return current;
 			}
 		}
 		throw new NoSuchElementException();
-	}
-	
-	public Iterator<T> dfsIterator() {
-		return new HelpIterator<T>(this, new dfsType<T>());
 	}
 	
 	public T breadthFirstSearch(T key) {
-		for (Iterator<T> it = bfsIterator(); it.hasNext(); ) {
+		for (Iterator<T> it = new HelpIterator<T>(this, new BfsType<T>()); it.hasNext(); ) {
 			T current = it.next(); 
 			if (current == key) {
 				return current;
@@ -175,81 +177,10 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 		throw new NoSuchElementException();
 		
 	}
-	
-	public Iterator<T> bfsIterator() {
-		return new HelpIterator<T>(this, new bfsType<T>());
-	}
-	
-	private static interface SearchType<T extends Comparable<T>> {
-		public boolean hasNext();
-		public void push(Node<T> node);
-		public Node<T> pop();
-	}
-	
-	private static class dfsType<T extends Comparable<T>> implements SearchType<T> {
-
-		private Stack<Node<T>> stack = new Stack<MyBinarySearchTree.Node<T>>(); 
-		@Override
-		public void push(Node<T> node) {
-			stack.push(node);
-		}
-
-		@Override
-		public Node<T> pop() {
-			Node<T> node = stack.pop();
-			if (node.rTree != null && node.rTree.root.key != null) {
-				stack.push(node.getRTree().getRoot());
-			}
-			if (node.lTree != null && node.lTree.root.key != null) {
-				stack.push(node.getLTree().getRoot());
-			}
-			return node;
-		}
-
-		@Override
-		public boolean hasNext() {
-			if (stack.empty()) return false;
-			if (stack.peek().key == null) return false;
-			return true;
-		}
-	}
-	
-	private static class bfsType<T extends Comparable<T>> implements SearchType<T> {
-		
-		private Queue<Node<T>> queue = new ArrayDeque<MyBinarySearchTree.Node<T>>(); 
-		@Override
-		public void push(Node<T> node) {
-			queue.add(node);
-		}
-		
-		@Override
-		public Node<T> pop() {
-			Node<T> node = queue.poll();
-			if (node.rTree != null && node.rTree.root.key != null) {
-				queue.add(node.getRTree().getRoot());
-			}
-			if (node.lTree != null && node.lTree.root.key != null) {
-				queue.add(node.getLTree().getRoot());
-			}
-			return node;
-		}
-		
-		@Override
-		public boolean hasNext() {
-			if (queue.isEmpty()) return false;
-			if (queue.peek().key == null) return false;
-			return true;
-		}
-	}
-	
 	
 	private static class HelpIterator<T extends Comparable<T>> implements Iterator<T> {
 
 		private SearchType<T> type;
-		
-		/**
-		 * @param stack
-		 */
 		public HelpIterator(MyBinarySearchTree<T> tree, SearchType<T> type) {
 			this.type = type;
 			type.push(tree.getRoot());
@@ -269,20 +200,11 @@ public class MyBinarySearchTree<T extends Comparable<T>> implements Iterable<T> 
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-		
-		
 	}
 	
-	/**
-	 * @return
-	 */
-	public boolean isEmpty() {
-		return (root == null);
-	}
-
 	@Override
 	public Iterator<T> iterator() {
-		return dfsIterator();
+		return new HelpIterator<T>(this, searchType);
 	}
 	
 

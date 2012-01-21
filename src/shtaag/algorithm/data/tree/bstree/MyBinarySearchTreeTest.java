@@ -21,7 +21,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testInsert() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(1);
 		bst.insert(2);
 		bst.insert(3);
@@ -42,7 +42,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testInsertDuplicate() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		
 		try {
 			bst.insert(1);
@@ -55,7 +55,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testDeleteRoot() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(1);
 		bst.insert(2);
 		
@@ -71,7 +71,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testDeleteLeaf() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(1);
 		bst.insert(2);
 		
@@ -87,7 +87,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testDeleteNoRTree() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(4);
 		bst.insert(1);
 		bst.insert(6);
@@ -104,7 +104,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testDeleteNoLTree() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(4);
 		bst.insert(1);
 		bst.insert(5);
@@ -122,7 +122,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testDeleteNoLTreeTransplantLargetree() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(4);
 		bst.insert(1);
 		bst.insert(5);
@@ -145,7 +145,7 @@ public class MyBinarySearchTreeTest {
 	@Test
 	public void testDeleteUseMinimumSearch() {
 		
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(4);
 		bst.insert(1);
 		bst.insert(5);
@@ -168,7 +168,7 @@ public class MyBinarySearchTreeTest {
 	
 	@Test
 	public void testSearch() {
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new DfsType<Integer>());
 		bst.insert(1);
 		bst.insert(10);
 		bst.insert(2);
@@ -184,7 +184,7 @@ public class MyBinarySearchTreeTest {
 
 	@Test
 	public void testBfsIterator() {
-		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null);
+		MyBinarySearchTree<Integer> bst = new MyBinarySearchTree<Integer>(null, new BfsType<Integer>());
 		bst.insert(1);
 		bst.insert(10);
 		bst.insert(2);
@@ -195,7 +195,7 @@ public class MyBinarySearchTreeTest {
 		bst.insert(80);
 		
 		StringBuilder sb = new StringBuilder();
-		for (Iterator<Integer> it = bst.bfsIterator(); it.hasNext();) {
+		for (Iterator<Integer> it = bst.iterator(); it.hasNext();) {
 			sb.append(it.next() + ":");
 		}
 		System.out.println(sb.toString());
